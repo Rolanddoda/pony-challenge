@@ -36,19 +36,26 @@
           </v-btn>
         </template>
       </v-snackbar>
+      <Game v-if="mazeId" :id="mazeId" />
     </v-main>
   </v-app>
 </template>
 
 <script>
+import Game from "./components/Game";
+
 export default {
   name: "App",
+
+  components: {
+    Game
+  },
 
   data: () => ({
     isBtnLoading: false,
     ponyName: "",
     error: null,
-    mazeId: null
+    mazeId: null //f2c7918f-7f62-4a79-a124-4eefc277b67c
   }),
 
   methods: {
