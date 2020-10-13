@@ -1,56 +1,74 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
-
     <v-main>
-      <HelloWorld />
+      <v-dialog :value="!mazeId" persistent max-width="290">
+        <v-card>
+          <v-card-title class="headline">
+            Enter a pony name to start the game
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+              v-model.trim="ponyName"
+              label="Pony name"
+              placeholder="Enter pony name"
+              outlined
+            ></v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :disabled="!ponyName"
+              :loading="isBtnLoading"
+              color="primary"
+              @click="startGame"
+            >
+              Start the game
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-snackbar :value="!!error" @input="error = null">
+        {{ error }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn color="red" text v-bind="attrs" @click="error = null">
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
-
 export default {
   name: "App",
 
-  components: {
-    HelloWorld
-  },
-
   data: () => ({
-    //
-  })
+    isBtnLoading: false,
+    ponyName: "",
+    error: null,
+    mazeId: null
+  }),
+
+  methods: {
+    startGame() {
+      this.isBtnLoading = true;
+      this.$axios
+        .post("/maze", {
+          "maze-width": 15,
+          "maze-height": 15,
+          "maze-player-name": this.ponyName,
+          difficulty: 1
+        })
+        .then(({ data }) => {
+          this.mazeId = data.maze_id;
+        })
+        .catch(err => {
+          this.error = "Error: " + err.response.data;
+        })
+        .finally(() => (this.isBtnLoading = false));
+    }
+  }
 };
 </script>
