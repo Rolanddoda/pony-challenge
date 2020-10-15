@@ -12,6 +12,7 @@
           cell.join(' '),
           { pony: index === data.pony[0] },
           { domokun: index === data.domokun[0] },
+          { finish: index === data['end-point'][0] },
           { 'border-right': index !== 0 && (index + 1) % cols === 0 },
           { 'border-bottom': index > cols * rows - cols - 1 }
         ]"
@@ -19,6 +20,7 @@
       >
         <span v-if="index === data.pony[0]">🐎</span>
         <span v-if="index === data.domokun[0]">👾</span>
+        <span v-if="index === data['end-point'][0]">🏁</span>
       </div>
     </div>
   </div>
@@ -92,7 +94,8 @@ export default {
       }
 
       &.pony,
-      &.domokun {
+      &.domokun,
+      &.finish {
         font-size: 2rem;
         display: grid;
         place-items: center;
