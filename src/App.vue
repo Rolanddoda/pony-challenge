@@ -36,26 +36,28 @@
           </v-btn>
         </template>
       </v-snackbar>
-      <Game v-if="mazeId" :id="mazeId" />
+      <Maze v-if="mazeId" :id="mazeId" :cols="cols" :rows="rows" />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import Game from "./components/Game";
+import Maze from "./components/Maze";
 
 export default {
   name: "App",
 
   components: {
-    Game
+    Maze
   },
 
   data: () => ({
     isBtnLoading: false,
     ponyName: "",
     error: null,
-    mazeId: null //f2c7918f-7f62-4a79-a124-4eefc277b67c
+    mazeId: "f2c7918f-7f62-4a79-a124-4eefc277b67c",
+    cols: 15,
+    rows: 15
   }),
 
   methods: {
@@ -63,8 +65,8 @@ export default {
       this.isBtnLoading = true;
       this.$axios
         .post("/maze", {
-          "maze-width": 15,
-          "maze-height": 15,
+          "maze-width": this.cols,
+          "maze-height": this.rows,
           "maze-player-name": this.ponyName,
           difficulty: 1
         })

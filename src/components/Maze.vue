@@ -1,13 +1,22 @@
 <template>
   <div class="game fill-height pa-16">
-    <div class="maze fill-height" v-if="cells">
+    <div
+      class="maze fill-height"
+      :style="{ '--cols': cols, '--rows': rows }"
+      v-if="data"
+    >
       <div
         class="cell"
-        v-for="(cell, index) of cells"
-        :class="[cell.join(' '), { pony: index === ponyPos }]"
+        v-for="(cell, index) of data.data"
+        :class="[
+          cell.join(' '),
+          { pony: index === data.pony[0] },
+          { 'border-right': index !== 0 && (index + 1) % cols === 0 },
+          { 'border-bottom': index > cols * rows - cols - 1 }
+        ]"
         :key="index"
       >
-        <span v-if="index === ponyPos">🐎</span>
+        <span v-if="index === data.pony[0]">🐎</span>
       </div>
     </div>
   </div>
@@ -19,18 +28,26 @@ export default {
     id: {
       type: String,
       required: true
+    },
+
+    cols: {
+      type: Number,
+      required: true
+    },
+
+    rows: {
+      type: Number,
+      required: true
     }
   },
 
   data: () => ({
-    cells: null,
-    ponyPos: null
+    data: null
   }),
 
   created() {
     this.$axios.get(`/maze/${this.id}`).then(({ data }) => {
-      this.cells = data.data;
-      this.ponyPos = data.pony[0];
+      this.data = data;
     });
   }
 };
@@ -52,11 +69,17 @@ export default {
 
   .maze {
     display: grid;
-    grid-template-columns: repeat(15, 1fr);
-    grid-template-rows: repeat(15, 1fr);
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
 
     .cell {
-      border: 1px solid rgba(black, 0.1);
+      &.border-right {
+        border-right: 1px solid;
+      }
+
+      &.border-bottom {
+        border-bottom: 1px solid;
+      }
 
       &.north {
         border-top: 1px solid;
