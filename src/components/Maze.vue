@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
+
 export default {
   props: {
     id: {
@@ -52,17 +54,28 @@ export default {
       if (!this.data) return []
       const ponyPos = this.data.pony[0]
       const finishPos = this.data['end-point'][0]
-      const cells = this.data.data
       let pathFound = []
 
       if (this.canGoBottom(ponyPos)) {
-        pathFound = this.tryPath(this.nextBottom(ponyPos), finishPos, cells, [])
+        const nextPos = this.nextBottom(ponyPos)
+        pathFound.push({ pos: nextPos, step: 'bottom' })
+        if (nextPos === finishPos) return pathFound
+        return this.tryPath(nextPos, finishPos, pathFound)
       } else if (this.canGoRight(ponyPos)) {
-        pathFound = this.tryPath(this.nextRight(ponyPos), finishPos, cells, [])
+        const nextPos = this.nextRight(ponyPos)
+        pathFound.push({ pos: nextPos, step: 'right' })
+        if (nextPos === finishPos) return pathFound
+        return this.tryPath(nextPos, finishPos, pathFound)
       } else if (this.canGoLeft(ponyPos)) {
-        pathFound = this.tryPath(this.nextLeft(ponyPos), finishPos, cells, [])
+        const nextPos = this.nextLeft(ponyPos)
+        pathFound.push({ pos: nextPos, step: 'left' })
+        if (nextPos === finishPos) return pathFound
+        return this.tryPath(nextPos, finishPos, pathFound)
       } else if (this.canGoTop(ponyPos)) {
-        pathFound = this.tryPath(this.nextTop(ponyPos), finishPos, cells, [])
+        const nextPos = this.nextTop(ponyPos)
+        pathFound.push({ pos: nextPos, step: 'top' })
+        if (nextPos === finishPos) return pathFound
+        return this.tryPath(nextPos, finishPos, pathFound)
       }
 
       return pathFound
@@ -113,7 +126,37 @@ export default {
     },
 
     tryPath(pos, finishPos, path) {
-      // TODO implement algorithm
+      let writePath = cloneDeep(path)
+      console.log(pos)
+
+      function goesBack(nextPos) {
+        const previousPositions = writePath.map(path => path.pos)
+        return !!previousPositions.includes(nextPos)
+      }
+
+      if (this.canGoBottom(pos) && !goesBack(this.nextBottom(pos))) {
+        const nextPos = this.nextBottom(pos)
+        writePath.push({ pos: nextPos, step: 'bottom' })
+        if (nextPos === finishPos) return writePath
+        return this.tryPath(nextPos, finishPos, writePath)
+      } else if (this.canGoRight(pos) && !goesBack(this.nextRight(pos))) {
+        const nextPos = this.nextRight(pos)
+        writePath.push({ pos: nextPos, step: 'right' })
+        if (nextPos === finishPos) return writePath
+        return this.tryPath(nextPos, finishPos, writePath)
+      } else if (this.canGoLeft(pos) && !goesBack(this.nextLeft(pos))) {
+        const nextPos = this.nextLeft(pos)
+        writePath.push({ pos: nextPos, step: 'left' })
+        if (nextPos === finishPos) return writePath
+        return this.tryPath(nextPos, finishPos, writePath)
+      } else if (this.canGoTop(pos) && !goesBack(this.nextTop(pos))) {
+        const nextPos = this.nextTop(pos)
+        writePath.push({ pos: nextPos, step: 'top' })
+        if (nextPos === finishPos) return writePath
+        return this.tryPath(nextPos, finishPos, writePath)
+      }
+
+      return writePath
     }
   }
 }
@@ -135,6 +178,8 @@ export default {
     grid-template-rows: repeat(var(--rows), 1fr);
 
     .cell {
+      border: 1px solid rgba(black, 0.1);
+
       &.border-right {
         border-right: 1px solid;
       }
