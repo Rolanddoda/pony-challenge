@@ -60,13 +60,18 @@ export default {
       let pathFound = [];
 
       if (this.canGoBottom(ponyPos)) {
-        pathFound = this.tryPath(ponyPos + this.cols, finishPos, cells, []);
+        pathFound = this.tryPath(
+          this.nextBottom(ponyPos),
+          finishPos,
+          cells,
+          []
+        );
       } else if (this.canGoRight(ponyPos)) {
-        pathFound = this.tryPath(ponyPos + 1, finishPos, cells, []);
+        pathFound = this.tryPath(this.nextRight(ponyPos), finishPos, cells, []);
       } else if (this.canGoLeft(ponyPos)) {
-        pathFound = this.tryPath(ponyPos - 1, finishPos, cells, []);
+        pathFound = this.tryPath(this.nextLeft(ponyPos), finishPos, cells, []);
       } else if (this.canGoTop(ponyPos)) {
-        pathFound = this.tryPath(ponyPos - this.cols, finishPos, cells, []);
+        pathFound = this.tryPath(this.nextTop(ponyPos), finishPos, cells, []);
       }
 
       return pathFound;
@@ -101,6 +106,22 @@ export default {
     canGoLeft(pos) {
       const maze = this.data.data;
       return !maze[pos].includes("west");
+    },
+
+    nextTop(pos) {
+      return pos - this.cols;
+    },
+
+    nextRight(pos) {
+      return pos + 1;
+    },
+
+    nextBottom(pos) {
+      return pos + this.cols;
+    },
+
+    nextLeft(pos) {
+      return pos - 1;
     },
 
     tryPath(pos, finishPos, path) {
