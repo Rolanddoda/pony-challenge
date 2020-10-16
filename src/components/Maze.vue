@@ -46,7 +46,8 @@ export default {
   },
 
   data: () => ({
-    data: null
+    data: null,
+    ponyPathPos: 0
   }),
 
   computed: {
@@ -85,10 +86,30 @@ export default {
   created() {
     this.$axios.get(`/maze/${this.id}`).then(({ data }) => {
       this.data = data
+      this.initGame()
     })
   },
 
   methods: {
+    initGame() {
+      const { closestPathToFinish: path, ponyPathPos } = this
+      const map = {
+        top: 'north',
+        right: 'east',
+        bottom: 'south',
+        left: 'west'
+      }
+
+      const step = path[ponyPathPos].step
+      const pos = path[ponyPathPos].pos
+      const direction = map[step]
+
+      this.$axios.post(`/maze/${this.id}`, { direction }).then(() => {
+        this.ponyPathPos++
+        if (pos !== this.data.pony[0]) this.initGame()
+      })
+    },
+
     canGoTop(pos) {
       const maze = this.data.data
       return !maze[pos].includes('north')
