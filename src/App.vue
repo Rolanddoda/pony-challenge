@@ -16,12 +16,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              :disabled="!ponyName"
-              :loading="isBtnLoading"
-              color="primary"
-              @click="startGame"
-            >
+            <v-btn :disabled="!ponyName" :loading="isBtnLoading" color="primary" @click="startGame">
               Start the game
             </v-btn>
           </v-card-actions>
@@ -42,10 +37,10 @@
 </template>
 
 <script>
-import Maze from "./components/Maze";
+import Maze from './components/Maze'
 
 export default {
-  name: "App",
+  name: 'App',
 
   components: {
     Maze
@@ -53,31 +48,31 @@ export default {
 
   data: () => ({
     isBtnLoading: false,
-    ponyName: "",
+    ponyName: '',
     error: null,
-    mazeId: "f2c7918f-7f62-4a79-a124-4eefc277b67c",
+    mazeId: 'f2c7918f-7f62-4a79-a124-4eefc277b67c',
     cols: 15,
     rows: 15
   }),
 
   methods: {
     startGame() {
-      this.isBtnLoading = true;
+      this.isBtnLoading = true
       this.$axios
-        .post("/maze", {
-          "maze-width": this.cols,
-          "maze-height": this.rows,
-          "maze-player-name": this.ponyName,
+        .post('/maze', {
+          'maze-width': this.cols,
+          'maze-height': this.rows,
+          'maze-player-name': this.ponyName,
           difficulty: 1
         })
         .then(({ data }) => {
-          this.mazeId = data.maze_id;
+          this.mazeId = data.maze_id
         })
         .catch(err => {
-          this.error = "Error: " + err.response.data;
+          this.error = 'Error: ' + err.response.data
         })
-        .finally(() => (this.isBtnLoading = false));
+        .finally(() => (this.isBtnLoading = false))
     }
   }
-};
+}
 </script>

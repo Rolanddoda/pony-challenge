@@ -1,6 +1,6 @@
 module.exports = {
   devServer: {
-    clientLogLevel: "warn",
+    clientLogLevel: 'warn',
     overlay: false
   }
-};
+}

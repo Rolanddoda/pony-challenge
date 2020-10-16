@@ -1,10 +1,6 @@
 <template>
   <div class="game fill-height pa-16">
-    <div
-      class="maze fill-height"
-      :style="{ '--cols': cols, '--rows': rows }"
-      v-if="data"
-    >
+    <div class="maze fill-height" :style="{ '--cols': cols, '--rows': rows }" v-if="data">
       <div
         class="cell"
         v-for="(cell, index) of data.data"
@@ -53,92 +49,80 @@ export default {
 
   computed: {
     closestPathToFinish() {
-      if (!this.data) return [];
-      const ponyPos = this.data.pony[0];
-      const finishPos = this.data["end-point"][0];
-      const cells = this.data.data;
-      let pathFound = [];
+      if (!this.data) return []
+      const ponyPos = this.data.pony[0]
+      const finishPos = this.data['end-point'][0]
+      const cells = this.data.data
+      let pathFound = []
 
       if (this.canGoBottom(ponyPos)) {
-        pathFound = this.tryPath(
-          this.nextBottom(ponyPos),
-          finishPos,
-          cells,
-          []
-        );
+        pathFound = this.tryPath(this.nextBottom(ponyPos), finishPos, cells, [])
       } else if (this.canGoRight(ponyPos)) {
-        pathFound = this.tryPath(this.nextRight(ponyPos), finishPos, cells, []);
+        pathFound = this.tryPath(this.nextRight(ponyPos), finishPos, cells, [])
       } else if (this.canGoLeft(ponyPos)) {
-        pathFound = this.tryPath(this.nextLeft(ponyPos), finishPos, cells, []);
+        pathFound = this.tryPath(this.nextLeft(ponyPos), finishPos, cells, [])
       } else if (this.canGoTop(ponyPos)) {
-        pathFound = this.tryPath(this.nextTop(ponyPos), finishPos, cells, []);
+        pathFound = this.tryPath(this.nextTop(ponyPos), finishPos, cells, [])
       }
 
-      return pathFound;
+      return pathFound
     }
   },
 
   created() {
     this.$axios.get(`/maze/${this.id}`).then(({ data }) => {
-      this.data = data;
-    });
+      this.data = data
+    })
   },
 
   methods: {
     canGoTop(pos) {
-      const maze = this.data.data;
-      return !maze[pos].includes("north");
+      const maze = this.data.data
+      return !maze[pos].includes('north')
     },
 
     canGoRight(pos) {
-      const maze = this.data.data;
-      return (pos + 1) % this.cols !== 0 && !maze[pos + 1].includes("west");
+      const maze = this.data.data
+      return (pos + 1) % this.cols !== 0 && !maze[pos + 1].includes('west')
     },
 
     canGoBottom(pos) {
-      const maze = this.data.data;
-      return (
-        pos + this.cols < maze.length &&
-        !maze[pos + this.cols].includes("north")
-      );
+      const maze = this.data.data
+      return pos + this.cols < maze.length && !maze[pos + this.cols].includes('north')
     },
 
     canGoLeft(pos) {
-      const maze = this.data.data;
-      return !maze[pos].includes("west");
+      const maze = this.data.data
+      return !maze[pos].includes('west')
     },
 
     nextTop(pos) {
-      return pos - this.cols;
+      return pos - this.cols
     },
 
     nextRight(pos) {
-      return pos + 1;
+      return pos + 1
     },
 
     nextBottom(pos) {
-      return pos + this.cols;
+      return pos + this.cols
     },
 
     nextLeft(pos) {
-      return pos - 1;
+      return pos - 1
     },
 
     tryPath(pos, finishPos, path) {
       // TODO implement algorithm
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
 .game {
   background: #2193b0; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to right,
-    #6dd5ed,
-    #2193b0
-  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right, #6dd5ed, #2193b0); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(
     to right,
     #6dd5ed,
