@@ -1,6 +1,6 @@
 <template>
   <div class="game fill-height pa-16">
-    <YouWonDialog v-model="dialog" @new-game="$emit('new-game')" />
+    <GameOverDialog :won="won" v-model="dialog" @new-game="$emit('new-game')" />
 
     <div class="maze fill-height" :style="{ '--cols': cols, '--rows': rows }" v-if="data">
       <div
@@ -18,9 +18,9 @@
         :data-index="index"
         :key="index"
       >
-        <span v-if="index === pony">🐎</span>
+        <span class="pony-icon" v-if="index === pony">🐎</span>
         <span v-if="index === data.domokun[0]">👾</span>
-        <span v-if="index === data['end-point'][0]">🏁</span>
+        <span class="finish-icon" v-if="index === data['end-point'][0]">🏁</span>
         <span class="index">{{ index }}</span>
       </div>
     </div>
@@ -29,13 +29,13 @@
 
 <script>
 import mazeUtilitiesMixin from './maze-utilities-mixin'
-import YouWonDialog from '@/components/YouWonDialog'
+import GameOverDialog from '@/components/GameOverDialog'
 
 export default {
   mixins: [mazeUtilitiesMixin],
 
   components: {
-    YouWonDialog
+    GameOverDialog
   },
 
   props: {
@@ -59,7 +59,8 @@ export default {
     data: null,
     pony: null,
     ponyPathPos: 1,
-    dialog: false
+    dialog: false,
+    won: false
   }),
 
   computed: {
@@ -96,10 +97,12 @@ export default {
       const pos = path[ponyPathPos].pos
       const direction = map[step]
 
-      this.$axios.post(`/maze/${this.id}`, { direction }).then(() => {
+      this.$axios.post(`/maze/${this.id}`, { direction }).then(({ data }) => {
+        if (data.state === 'won') this.won = true
+        else if (data.state === 'over') this.won = false
         this.ponyPathPos++
         this.pony = pos
-        if (pos !== this.data['end-point'][0]) this.play()
+        if (pos !== this.data['end-point'][0] && data.state === 'active') this.play()
         else {
           this.dialog = true
         }
@@ -165,6 +168,21 @@ export default {
         font-size: 2rem;
         display: grid;
         place-items: center;
+
+        > span {
+          grid-area: 1 / -1;
+        }
+      }
+
+      .pony-icon {
+        z-index: 1;
+        margin-left: 7px;
+        margin-top: 3px;
+      }
+
+      .finish-icon {
+        margin-left: -7px;
+        margin-top: -3px;
       }
 
       > .index {

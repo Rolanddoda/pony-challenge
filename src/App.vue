@@ -4,7 +4,7 @@
       <v-dialog :value="!mazeId" persistent max-width="350">
         <v-card>
           <v-card-title class="headline">
-            Enter a pony name to start the game
+            Enter dimensions of the maze
           </v-card-title>
           <v-card-text>
             <v-text-field
