@@ -1,6 +1,5 @@
 <template>
   <div class="game fill-height pa-16">
-    <v-btn @click="closestPathToFinish">Find path</v-btn>
     <div class="maze fill-height" :style="{ '--cols': cols, '--rows': rows }" v-if="data">
       <div
         class="cell"
@@ -27,7 +26,6 @@
 </template>
 
 <script>
-import { cloneDeep } from 'lodash'
 import mazeUtilitiesMixin from './maze-utilities-mixin'
 
 export default {
@@ -52,38 +50,31 @@ export default {
 
   data: () => ({
     data: null,
-    ponyPathPos: 0
+    ponyPathPos: 1
   }),
 
   computed: {
-    // closestPathToFinish() {
-    //   if (!this.data) return []
-    //
-    //   const ponyPos = this.data.pony[0]
-    //   const finishPos = this.data['end-point'][0]
-    //   return this.tryPath(ponyPos, finishPos, [])
-    // }
+    closestPath() {
+      if (!this.data) return []
+
+      let ponyPos = this.data.pony[0]
+      const finishPos = this.data['end-point'][0]
+      const path = [{ pos: ponyPos, step: null }]
+
+      return this.findPath(ponyPos, finishPos, path)
+    }
   },
 
   created() {
     this.$axios.get(`/maze/${this.id}`).then(({ data }) => {
       this.data = data
-      // this.initGame()
+      this.play()
     })
   },
 
   methods: {
-    closestPathToFinish() {
-      if (!this.data) return []
-
-      const ponyPos = this.data.pony[0]
-      const finishPos = this.data['end-point'][0]
-      const path = this.tryPath(ponyPos, finishPos, [])
-      console.log(path)
-    },
-
-    initGame() {
-      const { closestPathToFinish: path, ponyPathPos } = this
+    play() {
+      const { closestPath: path, ponyPathPos } = this
       const map = {
         top: 'north',
         right: 'east',
@@ -97,29 +88,27 @@ export default {
 
       this.$axios.post(`/maze/${this.id}`, { direction }).then(() => {
         this.ponyPathPos++
-        if (pos !== this.data.pony[0]) this.initGame()
+        this.data.pony = [pos]
+        if (pos !== this.data['end-point'][0]) {
+          setTimeout(() => this.play(), 500)
+        }
       })
     },
 
-    tryPath(pos, finishPos, path) {
-      let writePath = cloneDeep(path)
+    findPath(pos, finishPos, path, route = [...path]) {
+      const possibleDirections = this.possibleDirections(pos, route)
 
-      function goesBack(nextPos) {
-        const previousPositions = writePath.map(path => path.pos)
-        return !!previousPositions.includes(nextPos)
+      if (pos === finishPos) {
+        return route
       }
 
-      if (this.canGoBottom(pos) && !goesBack(this.nextBottom(pos))) {
-        return this.makeNextStep(pos, writePath, finishPos, 'bottom')
-      } else if (this.canGoRight(pos) && !goesBack(this.nextRight(pos))) {
-        return this.makeNextStep(pos, writePath, finishPos, 'right')
-      } else if (this.canGoLeft(pos) && !goesBack(this.nextLeft(pos))) {
-        return this.makeNextStep(pos, writePath, finishPos, 'left')
-      } else if (this.canGoTop(pos) && !goesBack(this.nextTop(pos))) {
-        return this.makeNextStep(pos, writePath, finishPos, 'top')
-      }
+      possibleDirections.forEach(direction => {
+        const nextPos = this.nextPos(pos, direction)
+        const newRoute = [...route, { pos: nextPos, step: direction }]
+        path = this.findPath(nextPos, finishPos, path, newRoute)
+      })
 
-      return { writePath, pos }
+      return path
     }
   }
 }

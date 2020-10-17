@@ -48,6 +48,28 @@ export default {
       path.push({ pos: nextPos, step })
       if (nextPos === finishPos) return path
       return this.tryPath(nextPos, finishPos, path)
+    },
+
+    possibleDirections(pos, path) {
+      const directions = []
+      const goesBack = direction => {
+        const pathPositions = path.map(item => item.pos)
+        return !!pathPositions.includes(this.nextPos(pos, direction))
+      }
+
+      if (this.canGoTop(pos) && !goesBack('top')) directions.push('top')
+      if (this.canGoRight(pos) && !goesBack('right')) directions.push('right')
+      if (this.canGoBottom(pos) && !goesBack('bottom')) directions.push('bottom')
+      if (this.canGoLeft(pos) && !goesBack('left')) directions.push('left')
+
+      return directions
+    },
+
+    nextPos(pos, direction) {
+      if (direction === 'top' && this.canGoTop(pos)) return this.nextTop(pos)
+      if (direction === 'right' && this.canGoRight(pos)) return this.nextRight(pos)
+      if (direction === 'bottom' && this.canGoBottom(pos)) return this.nextBottom(pos)
+      if (direction === 'left' && this.canGoLeft(pos)) return this.nextLeft(pos)
     }
   }
 }
