@@ -1,5 +1,6 @@
 <template>
   <div class="game fill-height pa-16">
+    <v-btn @click="closestPathToFinish">Find path</v-btn>
     <div class="maze fill-height" :style="{ '--cols': cols, '--rows': rows }" v-if="data">
       <div
         class="cell"
@@ -19,6 +20,7 @@
         <span v-if="index === data.pony[0]">🐎</span>
         <span v-if="index === data.domokun[0]">👾</span>
         <span v-if="index === data['end-point'][0]">🏁</span>
+        <span class="index">{{ index }}</span>
       </div>
     </div>
   </div>
@@ -26,8 +28,11 @@
 
 <script>
 import { cloneDeep } from 'lodash'
+import mazeUtilitiesMixin from './maze-utilities-mixin'
 
 export default {
+  mixins: [mazeUtilitiesMixin],
+
   props: {
     id: {
       type: String,
@@ -51,13 +56,13 @@ export default {
   }),
 
   computed: {
-    closestPathToFinish() {
-      if (!this.data) return []
-
-      const ponyPos = this.data.pony[0]
-      const finishPos = this.data['end-point'][0]
-      return this.tryPath(ponyPos, finishPos, [])
-    }
+    // closestPathToFinish() {
+    //   if (!this.data) return []
+    //
+    //   const ponyPos = this.data.pony[0]
+    //   const finishPos = this.data['end-point'][0]
+    //   return this.tryPath(ponyPos, finishPos, [])
+    // }
   },
 
   created() {
@@ -68,6 +73,15 @@ export default {
   },
 
   methods: {
+    closestPathToFinish() {
+      if (!this.data) return []
+
+      const ponyPos = this.data.pony[0]
+      const finishPos = this.data['end-point'][0]
+      const path = this.tryPath(ponyPos, finishPos, [])
+      console.log(path)
+    },
+
     initGame() {
       const { closestPathToFinish: path, ponyPathPos } = this
       const map = {
@@ -85,42 +99,6 @@ export default {
         this.ponyPathPos++
         if (pos !== this.data.pony[0]) this.initGame()
       })
-    },
-
-    canGoTop(pos) {
-      const maze = this.data.data
-      return !maze[pos].includes('north')
-    },
-
-    canGoRight(pos) {
-      const maze = this.data.data
-      return (pos + 1) % this.cols !== 0 && !maze[pos + 1].includes('west')
-    },
-
-    canGoBottom(pos) {
-      const maze = this.data.data
-      return pos + this.cols < maze.length && !maze[pos + this.cols].includes('north')
-    },
-
-    canGoLeft(pos) {
-      const maze = this.data.data
-      return !maze[pos].includes('west')
-    },
-
-    nextTop(pos) {
-      return pos - this.cols
-    },
-
-    nextRight(pos) {
-      return pos + 1
-    },
-
-    nextBottom(pos) {
-      return pos + this.cols
-    },
-
-    nextLeft(pos) {
-      return pos - 1
     },
 
     tryPath(pos, finishPos, path) {
@@ -153,7 +131,7 @@ export default {
         return this.tryPath(nextPos, finishPos, writePath)
       }
 
-      return writePath
+      return { writePath, pos }
     }
   }
 }
@@ -199,6 +177,11 @@ export default {
         font-size: 2rem;
         display: grid;
         place-items: center;
+      }
+
+      > .index {
+        position: absolute;
+        font-size: 0.625rem;
       }
     }
   }
