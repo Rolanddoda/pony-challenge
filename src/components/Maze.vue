@@ -53,40 +53,17 @@ export default {
   computed: {
     closestPathToFinish() {
       if (!this.data) return []
+
       const ponyPos = this.data.pony[0]
       const finishPos = this.data['end-point'][0]
-      let pathFound = []
-
-      if (this.canGoBottom(ponyPos)) {
-        const nextPos = this.nextBottom(ponyPos)
-        pathFound.push({ pos: nextPos, step: 'bottom' })
-        if (nextPos === finishPos) return pathFound
-        return this.tryPath(nextPos, finishPos, pathFound)
-      } else if (this.canGoRight(ponyPos)) {
-        const nextPos = this.nextRight(ponyPos)
-        pathFound.push({ pos: nextPos, step: 'right' })
-        if (nextPos === finishPos) return pathFound
-        return this.tryPath(nextPos, finishPos, pathFound)
-      } else if (this.canGoLeft(ponyPos)) {
-        const nextPos = this.nextLeft(ponyPos)
-        pathFound.push({ pos: nextPos, step: 'left' })
-        if (nextPos === finishPos) return pathFound
-        return this.tryPath(nextPos, finishPos, pathFound)
-      } else if (this.canGoTop(ponyPos)) {
-        const nextPos = this.nextTop(ponyPos)
-        pathFound.push({ pos: nextPos, step: 'top' })
-        if (nextPos === finishPos) return pathFound
-        return this.tryPath(nextPos, finishPos, pathFound)
-      }
-
-      return pathFound
+      return this.tryPath(ponyPos, finishPos, [])
     }
   },
 
   created() {
     this.$axios.get(`/maze/${this.id}`).then(({ data }) => {
       this.data = data
-      this.initGame()
+      // this.initGame()
     })
   },
 
@@ -148,7 +125,6 @@ export default {
 
     tryPath(pos, finishPos, path) {
       let writePath = cloneDeep(path)
-      console.log(pos)
 
       function goesBack(nextPos) {
         const previousPositions = writePath.map(path => path.pos)

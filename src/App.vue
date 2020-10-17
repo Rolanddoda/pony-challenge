@@ -50,7 +50,7 @@ export default {
     isBtnLoading: false,
     ponyName: '',
     error: null,
-    mazeId: 'f2c7918f-7f62-4a79-a124-4eefc277b67c',
+    mazeId: '66297c85-527e-4b3a-a080-128f79bf7e6a',
     cols: 15,
     rows: 15
   }),
