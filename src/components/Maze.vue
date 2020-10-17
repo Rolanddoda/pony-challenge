@@ -1,5 +1,7 @@
 <template>
   <div class="game fill-height pa-16">
+    <YouWonDialog v-model="dialog" @new-game="$emit('new-game')" />
+
     <div class="maze fill-height" :style="{ '--cols': cols, '--rows': rows }" v-if="data">
       <div
         class="cell"
@@ -27,9 +29,14 @@
 
 <script>
 import mazeUtilitiesMixin from './maze-utilities-mixin'
+import YouWonDialog from '@/components/YouWonDialog'
 
 export default {
   mixins: [mazeUtilitiesMixin],
+
+  components: {
+    YouWonDialog
+  },
 
   props: {
     id: {
@@ -51,7 +58,8 @@ export default {
   data: () => ({
     data: null,
     pony: null,
-    ponyPathPos: 1
+    ponyPathPos: 1,
+    dialog: false
   }),
 
   computed: {
@@ -92,6 +100,9 @@ export default {
         this.ponyPathPos++
         this.pony = pos
         if (pos !== this.data['end-point'][0]) this.play()
+        else {
+          this.dialog = true
+        }
       })
     },
 

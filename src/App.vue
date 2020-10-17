@@ -44,7 +44,7 @@
           </v-btn>
         </template>
       </v-snackbar>
-      <Maze v-if="mazeId" :id="mazeId" :cols="cols" :rows="rows" />
+      <Maze v-if="mazeId" :id="mazeId" :cols="cols" :rows="rows" @new-game="mazeId = null" />
     </v-main>
   </v-app>
 </template>
