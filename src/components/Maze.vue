@@ -110,25 +110,13 @@ export default {
       }
 
       if (this.canGoBottom(pos) && !goesBack(this.nextBottom(pos))) {
-        const nextPos = this.nextBottom(pos)
-        writePath.push({ pos: nextPos, step: 'bottom' })
-        if (nextPos === finishPos) return writePath
-        return this.tryPath(nextPos, finishPos, writePath)
+        return this.makeNextStep(pos, writePath, finishPos, 'bottom')
       } else if (this.canGoRight(pos) && !goesBack(this.nextRight(pos))) {
-        const nextPos = this.nextRight(pos)
-        writePath.push({ pos: nextPos, step: 'right' })
-        if (nextPos === finishPos) return writePath
-        return this.tryPath(nextPos, finishPos, writePath)
+        return this.makeNextStep(pos, writePath, finishPos, 'right')
       } else if (this.canGoLeft(pos) && !goesBack(this.nextLeft(pos))) {
-        const nextPos = this.nextLeft(pos)
-        writePath.push({ pos: nextPos, step: 'left' })
-        if (nextPos === finishPos) return writePath
-        return this.tryPath(nextPos, finishPos, writePath)
+        return this.makeNextStep(pos, writePath, finishPos, 'left')
       } else if (this.canGoTop(pos) && !goesBack(this.nextTop(pos))) {
-        const nextPos = this.nextTop(pos)
-        writePath.push({ pos: nextPos, step: 'top' })
-        if (nextPos === finishPos) return writePath
-        return this.tryPath(nextPos, finishPos, writePath)
+        return this.makeNextStep(pos, writePath, finishPos, 'top')
       }
 
       return { writePath, pos }
