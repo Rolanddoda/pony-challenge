@@ -5,7 +5,7 @@
         class="cell"
         v-for="(cell, index) of data.data"
         :class="[
-          { pony: index === data.pony[0] },
+          { pony: index === pony },
           { domokun: index === data.domokun[0] },
           { finish: index === data['end-point'][0] },
           { 'border-right': index !== 0 && (index + 1) % cols === 0 },
@@ -16,7 +16,7 @@
         :data-index="index"
         :key="index"
       >
-        <span v-if="index === data.pony[0]">🐎</span>
+        <span v-if="index === pony">🐎</span>
         <span v-if="index === data.domokun[0]">👾</span>
         <span v-if="index === data['end-point'][0]">🏁</span>
         <span class="index">{{ index }}</span>
@@ -50,6 +50,7 @@ export default {
 
   data: () => ({
     data: null,
+    pony: null,
     ponyPathPos: 1
   }),
 
@@ -68,6 +69,7 @@ export default {
   created() {
     this.$axios.get(`/maze/${this.id}`).then(({ data }) => {
       this.data = data
+      this.pony = data.pony[0]
       this.play()
     })
   },
@@ -88,10 +90,8 @@ export default {
 
       this.$axios.post(`/maze/${this.id}`, { direction }).then(() => {
         this.ponyPathPos++
-        this.data.pony = [pos]
-        if (pos !== this.data['end-point'][0]) {
-          setTimeout(() => this.play(), 500)
-        }
+        this.pony = pos
+        if (pos !== this.data['end-point'][0]) this.play()
       })
     },
 

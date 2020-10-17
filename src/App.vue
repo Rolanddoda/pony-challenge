@@ -1,18 +1,31 @@
 <template>
   <v-app>
     <v-main>
-      <v-dialog :value="!mazeId" persistent max-width="290">
+      <v-dialog :value="!mazeId" persistent max-width="350">
         <v-card>
           <v-card-title class="headline">
             Enter a pony name to start the game
           </v-card-title>
           <v-card-text>
             <v-text-field
-              v-model.trim="ponyName"
-              label="Pony name"
-              placeholder="Enter pony name"
+              v-model.number="cols"
+              min="15"
+              max="25"
+              type="number"
+              label="Columns"
+              placeholder="Columns of the maze"
               outlined
-            ></v-text-field>
+            />
+
+            <v-text-field
+              v-model.number="rows"
+              min="15"
+              max="25"
+              type="number"
+              label="Rows"
+              placeholder="Rows of the maze"
+              outlined
+            />
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -48,9 +61,9 @@ export default {
 
   data: () => ({
     isBtnLoading: false,
-    ponyName: '',
+    ponyName: 'Fluttershy',
     error: null,
-    mazeId: '66297c85-527e-4b3a-a080-128f79bf7e6a',
+    mazeId: null,
     cols: 15,
     rows: 15
   }),
