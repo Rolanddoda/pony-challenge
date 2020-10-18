@@ -110,11 +110,8 @@ export default {
     },
 
     findPath(pos, finishPos, path, route = [...path]) {
+      if (pos === finishPos) return route
       const possibleDirections = this.possibleDirections(pos, route)
-
-      if (pos === finishPos) {
-        return route
-      }
 
       possibleDirections.forEach(direction => {
         const nextPos = this.nextPos(pos, direction)

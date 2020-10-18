@@ -36,20 +36,6 @@ export default {
       return pos - 1
     },
 
-    makeNextStep(pos, path, finishPos, step) {
-      const map = {
-        bottom: this.nextBottom,
-        right: this.nextRight,
-        left: this.nextLeft,
-        top: this.nextTop
-      }
-
-      const nextPos = map[step](pos)
-      path.push({ pos: nextPos, step })
-      if (nextPos === finishPos) return path
-      return this.tryPath(nextPos, finishPos, path)
-    },
-
     possibleDirections(pos, path) {
       const directions = []
       const goesBack = direction => {
