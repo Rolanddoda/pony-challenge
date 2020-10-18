@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <v-dialog :value="!mazeId" persistent max-width="350">
+      <v-dialog :value="!mazeId" persistent max-width="450">
         <v-card>
           <v-card-title class="headline">
             Enter dimensions of the maze
@@ -26,6 +26,16 @@
               placeholder="Rows of the maze"
               outlined
             />
+
+            <v-text-field
+              v-model.number="difficulty"
+              min="0"
+              max="10"
+              type="number"
+              label="Difficulty"
+              placeholder="Difficulty"
+              outlined
+            />
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -44,7 +54,7 @@
           </v-btn>
         </template>
       </v-snackbar>
-      <Maze v-if="mazeId" :id="mazeId" :cols="cols" :rows="rows" @new-game="mazeId = null" />
+      <Maze v-if="mazeId" :id="mazeId" :cols="cols" :rows="rows" @new-game="onNewGame" />
     </v-main>
   </v-app>
 </template>
@@ -65,7 +75,8 @@ export default {
     error: null,
     mazeId: null,
     cols: 15,
-    rows: 15
+    rows: 15,
+    difficulty: 0
   }),
 
   methods: {
@@ -76,7 +87,7 @@ export default {
           'maze-width': this.cols,
           'maze-height': this.rows,
           'maze-player-name': this.ponyName,
-          difficulty: 1
+          difficulty: this.difficulty
         })
         .then(({ data }) => {
           this.mazeId = data.maze_id
@@ -85,6 +96,11 @@ export default {
           this.error = 'Error: ' + err.response.data
         })
         .finally(() => (this.isBtnLoading = false))
+    },
+
+    onNewGame() {
+      if (this.difficulty < 10) this.difficulty++
+      this.mazeId = null
     }
   }
 }
