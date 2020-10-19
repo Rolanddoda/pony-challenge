@@ -140,23 +140,27 @@ export default {
     grid-template-columns: repeat(var(--cols), 1fr);
     grid-template-rows: repeat(var(--rows), 1fr);
 
+    div[class*='border'] {
+      border-image: url('https://www.w3schools.com/cssref/border.png') 30 stretch;
+    }
+
     .cell {
-      border: 1px solid rgba(black, 0.1);
+      position: relative;
 
       &.border-right {
-        border-right: 1px solid;
+        border-right: 10px solid;
       }
 
       &.border-bottom {
-        border-bottom: 1px solid;
+        border-bottom: 10px solid;
       }
 
       &.border-top {
-        border-top: 1px solid;
+        border-top: 10px solid;
       }
 
       &.border-left {
-        border-left: 1px solid;
+        border-left: 10px solid;
       }
 
       &.pony,
@@ -184,7 +188,14 @@ export default {
 
       > .index {
         position: absolute;
-        font-size: 0.625rem;
+        font-size: 0.825rem;
+        display: grid;
+        justify-content: start;
+        align-items: start;
+        width: 100%;
+        height: 100%;
+        font-weight: bold;
+        opacity: 0.2;
       }
     }
   }
