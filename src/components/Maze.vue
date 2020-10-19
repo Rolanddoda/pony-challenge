@@ -1,5 +1,5 @@
 <template>
-  <div class="game fill-height pa-16">
+  <div class="game fill-height pa-2">
     <GameOverDialog :won="won" v-model="dialog" @new-game="$emit('new-game')" />
 
     <div class="maze fill-height" :style="{ '--cols': cols, '--rows': rows }" v-if="data">
@@ -18,10 +18,9 @@
         :data-index="index"
         :key="index"
       >
-        <span class="pony-icon" v-if="index === pony">🐎</span>
-        <span v-if="index === data.domokun[0]">👾</span>
-        <span class="finish-icon" v-if="index === data['end-point'][0]">🏁</span>
-        <span class="index">{{ index }}</span>
+        <span class="pony icon" v-if="index === pony">🐎</span>
+        <span class="domokun icon" v-if="index === data.domokun[0]">👾</span>
+        <span class="finish icon" v-if="index === data['end-point'][0]">🏁</span>
       </div>
     </div>
   </div>
@@ -148,30 +147,33 @@ export default {
       position: relative;
 
       &.border-right {
-        border-right: 10px solid;
+        border-right: 5px solid;
       }
 
       &.border-bottom {
-        border-bottom: 10px solid;
+        border-bottom: 5px solid;
       }
 
       &.border-top {
-        border-top: 10px solid;
+        border-top: 5px solid;
       }
 
       &.border-left {
-        border-left: 10px solid;
+        border-left: 5px solid;
       }
 
       &.pony,
       &.domokun,
       &.finish {
-        font-size: 2rem;
         display: grid;
         place-items: center;
 
         > span {
           grid-area: 1 / -1;
+
+          &.icon {
+            font-size: 1rem;
+          }
         }
       }
 
@@ -184,18 +186,6 @@ export default {
       .finish-icon {
         margin-left: -7px;
         margin-top: -3px;
-      }
-
-      > .index {
-        position: absolute;
-        font-size: 0.825rem;
-        display: grid;
-        justify-content: start;
-        align-items: start;
-        width: 100%;
-        height: 100%;
-        font-weight: bold;
-        opacity: 0.2;
       }
     }
   }
