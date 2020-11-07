@@ -11,6 +11,7 @@
   "dependencies": {
     "@mdi/font": "^3.6.95",
     "core-js": "^3.6.5",
+    "flipping": "^1.1.0",
     "roboto-fontface": "*",
     "vue": "^2.6.11",
     "vuetify": "^2.2.11",

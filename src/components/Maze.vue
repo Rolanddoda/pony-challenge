@@ -18,7 +18,7 @@
         :data-index="index"
         :key="index"
       >
-        <span class="pony icon" v-if="index === pony">🐎</span>
+        <span class="pony icon" data-flip-key="pony-icon" v-if="index === pony">🐎</span>
         <span class="domokun icon" v-if="index === data.domokun[0]">👾</span>
         <span class="finish icon" v-if="index === data['end-point'][0]">🏁</span>
       </div>
@@ -29,6 +29,7 @@
 <script>
 import mazeUtilitiesMixin from './maze-utilities-mixin'
 import GameOverDialog from '@/components/GameOverDialog'
+import Flipping from 'flipping/dist/flipping.web'
 
 export default {
   mixins: [mazeUtilitiesMixin],
@@ -83,6 +84,20 @@ export default {
   },
 
   methods: {
+    async ponyToTheNextPosition(pos, data) {
+      const flipping = new Flipping({ duration: 300, easing: 'cubic-bezier(0.25, 1, 0.5, 1)' })
+      flipping.read()
+      this.pony = pos
+      await this.$nextTick()
+      flipping.flip()
+
+      if (pos !== this.data['end-point'][0] && data.state === 'active') {
+        setTimeout(() => this.play(), 300)
+      } else {
+        this.dialog = true
+      }
+    },
+
     play() {
       const { closestPath: path, ponyPathPos } = this
       const map = {
@@ -100,11 +115,7 @@ export default {
         if (data.state === 'won') this.won = true
         else if (data.state === 'over') this.won = false
         this.ponyPathPos++
-        this.pony = pos
-        if (pos !== this.data['end-point'][0] && data.state === 'active') this.play()
-        else {
-          this.dialog = true
-        }
+        this.ponyToTheNextPosition(pos, data)
       })
     },
 
