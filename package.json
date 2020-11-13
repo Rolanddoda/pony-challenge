@@ -13,6 +13,7 @@
     "core-js": "^3.6.5",
     "flipping": "^1.1.0",
     "roboto-fontface": "*",
+    "vee-validate": "^3.4.5",
     "vue": "^2.6.11",
     "vuetify": "^2.2.11",
     "vuex": "^3.4.0"
