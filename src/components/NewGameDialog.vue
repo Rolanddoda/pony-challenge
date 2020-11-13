@@ -4,40 +4,44 @@
       <v-card-title class="headline">
         Enter dimensions of the maze
       </v-card-title>
-      <v-card-text>
-        <v-text-field
-          v-model.number="cols"
-          min="15"
-          max="25"
-          type="number"
-          label="Columns"
-          placeholder="Columns of the maze"
-          outlined
-        />
 
-        <v-text-field
-          v-model.number="rows"
-          min="15"
-          max="25"
-          type="number"
-          label="Rows"
-          placeholder="Rows of the maze"
-          outlined
-        />
+      <ValidationObserver ref="validationObserver">
+        <v-card-text>
+          <ValidationProvider name="Columns" rules="required|integer|between:15,25" v-slot="{ errors }">
+            <v-text-field
+              v-model="cols"
+              :error-messages="errors"
+              label="Columns 15-25"
+              placeholder="Columns of the maze"
+              outlined
+            />
+          </ValidationProvider>
 
-        <v-text-field
-          v-model.number="difficulty"
-          min="0"
-          max="10"
-          type="number"
-          label="Difficulty"
-          placeholder="Difficulty"
-          outlined
-        />
-      </v-card-text>
+          <ValidationProvider name="Rows" rules="required|integer|between:15,25" v-slot="{ errors }">
+            <v-text-field
+              v-model="rows"
+              :error-messages="errors"
+              label="Rows 15-25"
+              placeholder="Rows of the maze"
+              outlined
+            />
+          </ValidationProvider>
+
+          <ValidationProvider name="Rows" rules="required|integer|between:0,10" v-slot="{ errors }">
+            <v-text-field
+              v-model="difficulty"
+              :error-messages="errors"
+              label="Difficulty 0-10"
+              placeholder="Difficulty"
+              outlined
+            />
+          </ValidationProvider>
+        </v-card-text>
+      </ValidationObserver>
+
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn :disabled="!ponyName" :loading="isBtnLoading" color="primary" @click="startGame">
+        <v-btn :disabled="!ponyName" :loading="isBtnLoading" color="primary" @click="validate">
           Start the game
         </v-btn>
       </v-card-actions>
@@ -46,7 +50,16 @@
 </template>
 
 <script>
+import '@/utils/validations'
+// Libraries
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
+
 export default {
+  components: {
+    ValidationProvider,
+    ValidationObserver
+  },
+
   data: () => ({
     isBtnLoading: false,
     ponyName: 'Fluttershy',
@@ -57,14 +70,18 @@ export default {
   }),
 
   methods: {
+    validate() {
+      this.$refs.validationObserver.validate().then(success => success && this.startGame())
+    },
+
     startGame() {
       this.isBtnLoading = true
       this.$axios
         .post('/maze', {
-          'maze-width': this.cols,
-          'maze-height': this.rows,
+          'maze-width': Number(this.cols),
+          'maze-height': Number(this.rows),
           'maze-player-name': this.ponyName,
-          difficulty: this.difficulty
+          difficulty: Number(this.difficulty)
         })
         .then(({ data }) => {
           this.mazeId = data.maze_id
