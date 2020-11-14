@@ -64,7 +64,7 @@
             :color="whoWins === 'pony' ? 'accent' : null"
             @click="whoWins = 'pony'"
           >
-            Pony (2 points)
+            Pony ({{ ponyBet }} points)
           </v-btn>
 
           <v-btn
@@ -73,8 +73,12 @@
             class="ml-5"
             @click="whoWins = 'monster'"
           >
-            Monster (10 points)
+            Monster ({{ monsterBet }} points)
           </v-btn>
+
+          <div v-if="whoWins" class="text-subtitle-1 mt-5">
+            If you win, your amount will become <b>{{ betToWin }}</b>
+          </div>
         </v-card-text>
       </ValidationObserver>
 
@@ -90,6 +94,7 @@
 
 <script>
 import '@/utils/validations'
+import { randomInteger } from '@/utils/helpers'
 import { betValue } from '@/functionalities/bet'
 // Libraries
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
@@ -108,11 +113,29 @@ export default {
     rows: 15,
     difficulty: 0,
     betAmount: 5,
-    whoWins: null
+    whoWins: null,
+    ponyBet: null,
+    monsterBet: null
   }),
 
   computed: {
-    betValue
+    betValue,
+
+    betToWin() {
+      if (!this.whoWins) return
+      const property = this.whoWins + 'Bet'
+      return this.betAmount * this[property]
+    }
+  },
+
+  watch: {
+    mazeId: {
+      handler() {
+        this.ponyBet = randomInteger(1, 3)
+        this.monsterBet = randomInteger(5, 8)
+      },
+      immediate: true
+    }
   },
 
   methods: {
