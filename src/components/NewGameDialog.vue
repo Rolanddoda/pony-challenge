@@ -99,7 +99,7 @@
 <script>
 import '@/utils/validations'
 import { randomInteger } from '@/utils/helpers'
-import { amount as userAmount } from '@/functionalities/bet'
+import { amount as userAmount, changeBet } from '@/functionalities/bet'
 // Libraries
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 
@@ -169,6 +169,7 @@ export default {
           difficulty: Number(this.difficulty)
         })
         .then(({ data }) => {
+          changeBet(Number(this.betAmount))
           this.mazeId = data.maze_id
           this.$emit('start-game', {
             mazeId: this.mazeId,
