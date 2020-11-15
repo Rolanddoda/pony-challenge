@@ -2,13 +2,14 @@
   <v-dialog v-model="dialog" persistent max-width="290">
     <v-card>
       <v-card-title class="headline">
-        <h2 v-if="won">Pony won!!!</h2>
-        <h2 v-else>Pony lost!!!</h2>
+        <h2 v-if="userWon">You won!!!</h2>
+        <h2 v-else>You lost!!!</h2>
       </v-card-title>
 
       <v-card-text>
-        <h3 v-if="won">Congrats!!! You saved the pony</h3>
-        <h3 v-else>You couldn't save the pony from the monster</h3>
+        <h3>
+          Your new amount is <b>{{ amount }}</b>
+        </h3>
       </v-card-text>
 
       <v-card-actions>
@@ -22,13 +23,26 @@
 </template>
 
 <script>
+import { amount, bet, changeAmount, whoWins, ponyBet, monsterBet } from '@/functionalities/bet/betState'
+
 export default {
   props: {
     value: Boolean,
-    won: Boolean
+    ponyWon: Boolean
   },
 
   computed: {
+    amount,
+    bet,
+    whoWins,
+    ponyBet,
+    monsterBet,
+
+    userWon() {
+      if (this.ponyWon && this.whoWins === 'pony') return true
+      return !this.ponyWon && this.whoWins === 'monster'
+    },
+
     dialog: {
       get() {
         return this.value
@@ -36,6 +50,21 @@ export default {
       set(newVal) {
         this.$emit('input', newVal)
       }
+    }
+  },
+
+  watch: {
+    dialog() {
+      if (this.ponyWon && this.whoWins === 'pony') this.onNewAmount(this.ponyBet * this.bet)
+      else if (!this.ponyWon && this.whoWins === 'monster') this.onNewAmount(this.monsterBet * this.bet)
+      else this.onNewAmount(this.amount - this.bet)
+    }
+  },
+
+  methods: {
+    onNewAmount(newAmount) {
+      changeAmount(newAmount)
+      localStorage.setItem('amount', `${newAmount}`)
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="game fill-height pa-2">
-    <GameOverDialog :won="won" v-model="dialog" @new-game="$emit('new-game')" />
+    <GameOverDialog :pony-won="won" v-model="dialog" @new-game="$emit('new-game')" />
 
     <div class="maze fill-height" :style="{ '--cols': cols, '--rows': rows }" v-if="data">
       <div
