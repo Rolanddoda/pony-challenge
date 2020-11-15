@@ -38,12 +38,12 @@
           </ValidationProvider>
 
           <div class="text-subtitle-1 mb-5">
-            Your amount is <b>{{ betValue }}</b> points to bet. Place your bet:
+            Your amount is <b>{{ userAmount }}</b> points to bet. Place your bet:
           </div>
 
           <ValidationProvider
             name="Bet amount"
-            :rules="`required|integer|min_value:5|max_value:${betValue}`"
+            :rules="`required|integer|min_value:5|max_value:${userAmount}`"
             v-slot="{ errors }"
           >
             <v-text-field
@@ -95,7 +95,7 @@
 <script>
 import '@/utils/validations'
 import { randomInteger } from '@/utils/helpers'
-import { betValue } from '@/functionalities/bet'
+import { amount as userAmount } from '@/functionalities/bet'
 // Libraries
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 
@@ -119,7 +119,7 @@ export default {
   }),
 
   computed: {
-    betValue,
+    userAmount,
 
     betToWin() {
       if (!this.whoWins) return

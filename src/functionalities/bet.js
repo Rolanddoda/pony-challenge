@@ -1,40 +1,40 @@
 import Vue from 'vue'
 import { isNumericAndPositive } from '@/utils/helpers'
 
-const bet = Vue.observable({
-  value: 5
+const state = Vue.observable({
+  amount: 5
 })
 
-function setBet(bet) {
-  localStorage.setItem('bet', `${bet}`)
+function setAmount(amount) {
+  localStorage.setItem('amount', `${amount}`)
 }
 
 export function runBetOnInitialRender() {
-  if (!localStorage.getItem('bet')) setBet(bet.value)
-  else bet.value = Number(localStorage.getItem('bet'))
+  if (!localStorage.getItem('amount')) setAmount(state.amount)
+  else state.amount = Number(localStorage.getItem('amount'))
 }
 
-export function changeBet(newBet) {
-  bet.value = newBet
-  setBet(bet.value)
+export function changeAmount(amount) {
+  state.amount = amount
+  setAmount(state.amount)
 }
 
-export function betValue() {
-  return bet.value
+export function amount() {
+  return state.amount
 }
 
 window.onstorage = () => {
-  const betFromLS = localStorage.getItem('bet')
-  if (isNumericAndPositive(betFromLS) && Number(betFromLS) < 100) {
+  const amount = localStorage.getItem('amount')
+  if (isNumericAndPositive(amount) && Number(amount) < 100) {
     alert('Wow wow wow. You genius. You did it. ;)')
-    bet.value = Number(betFromLS)
-  } else if (isNumericAndPositive(betFromLS) && Number(betFromLS) > 100) {
+    state.amount = Number(amount)
+  } else if (isNumericAndPositive(amount) && Number(amount) > 100) {
     alert(
       "Ha! This game is pretty smart and it won't allow you to enter a bet greater than 100. Can you hack it to get a bet greater than 100 ?? ;) "
     )
-    setBet(bet.value)
+    setAmount(amount)
   } else {
-    alert(`What's up with you ? You wanna bet with ${betFromLS} ?? pff humans...`)
-    setBet(bet.value)
+    alert(`What's up with you ? You wanna bet with ${amount} ?? pff humans...`)
+    setAmount(amount)
   }
 }
