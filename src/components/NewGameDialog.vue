@@ -79,6 +79,10 @@
           <div v-if="whoWins" class="text-subtitle-1 mt-5">
             If you win, your amount will become <b>{{ betToWin }}</b>
           </div>
+
+          <div v-if="!!winnerChosenError" class="error--text v-messages ml-3">
+            {{ winnerChosenError }}
+          </div>
         </v-card-text>
       </ValidationObserver>
 
@@ -115,11 +119,18 @@ export default {
     betAmount: 5,
     whoWins: null,
     ponyBet: null,
-    monsterBet: null
+    monsterBet: null,
+    startGameClicked: false
   }),
 
   computed: {
     userAmount,
+
+    winnerChosenError() {
+      if (!this.startGameClicked) return false
+      if (this.whoWins) return false
+      return 'You must select who wins'
+    },
 
     betToWin() {
       if (!this.whoWins) return
@@ -140,7 +151,12 @@ export default {
 
   methods: {
     validate() {
-      this.$refs.validationObserver.validate().then(success => success && this.startGame())
+      this.$refs.validationObserver.validate().then(success => {
+        if (success) {
+          this.startGameClicked = true
+          if (!this.winnerChosenError) this.startGame()
+        }
+      })
     },
 
     startGame() {
