@@ -2,7 +2,7 @@
   <v-dialog :value="!mazeId" persistent max-width="450">
     <v-card>
       <v-card-title class="headline">
-        Pony game
+        Pony vs monster game
       </v-card-title>
 
       <ValidationObserver ref="validationObserver">
@@ -62,7 +62,7 @@
           <v-btn
             :outlined="!whoWins || whoWins !== 'pony'"
             :color="whoWins === 'pony' ? 'accent' : null"
-            @click="whoWins = 'pony'"
+            @click="changeWhoWins('pony')"
           >
             Pony ({{ ponyBet }} points)
           </v-btn>
@@ -71,7 +71,7 @@
             :outlined="!whoWins || whoWins !== 'monster'"
             :color="whoWins === 'monster' ? 'accent' : null"
             class="ml-5"
-            @click="whoWins = 'monster'"
+            @click="changeWhoWins('monster')"
           >
             Monster ({{ monsterBet }} points)
           </v-btn>
@@ -99,7 +99,16 @@
 <script>
 import '@/utils/validations'
 import { randomInteger } from '@/utils/helpers'
-import { amount as userAmount, changeBet } from '@/functionalities/bet'
+import {
+  amount as userAmount,
+  changeBet,
+  whoWins,
+  changeWhoWins,
+  ponyBet,
+  changePonyBet,
+  monsterBet,
+  changeMonsterBet
+} from '@/functionalities/bet/betState'
 // Libraries
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 
@@ -117,14 +126,14 @@ export default {
     rows: 15,
     difficulty: 0,
     betAmount: 5,
-    whoWins: null,
-    ponyBet: null,
-    monsterBet: null,
     startGameClicked: false
   }),
 
   computed: {
     userAmount,
+    whoWins,
+    ponyBet,
+    monsterBet,
 
     winnerChosenError() {
       if (!this.startGameClicked) return false
@@ -142,14 +151,18 @@ export default {
   watch: {
     mazeId: {
       handler() {
-        this.ponyBet = randomInteger(1, 3)
-        this.monsterBet = randomInteger(5, 8)
+        this.changePonyBet(randomInteger(2, 3))
+        this.changeMonsterBet(randomInteger(5, 8))
       },
       immediate: true
     }
   },
 
   methods: {
+    changeWhoWins,
+    changePonyBet,
+    changeMonsterBet,
+
     validate() {
       this.$refs.validationObserver.validate().then(success => {
         if (success) {
