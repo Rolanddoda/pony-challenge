@@ -37,59 +37,81 @@
             />
           </ValidationProvider>
 
-          <div class="text-subtitle-1 mb-5">
-            Your amount is <b>{{ userAmount }}</b> points to bet. Place your bet:
-          </div>
+          <template v-if="userAmount">
+            <div class="text-subtitle-1 mb-5">
+              Your amount is <b>{{ userAmount }}</b> points to bet. Place your bet:
+            </div>
 
-          <ValidationProvider
-            name="Bet amount"
-            :rules="`required|integer|min_value:5|max_value:${userAmount}`"
-            v-slot="{ errors }"
-          >
-            <v-text-field
-              v-model="betAmount"
-              :error-messages="errors"
-              outlined
-              placeholder="Bet amount"
-              label="Bet amount"
-            />
-          </ValidationProvider>
+            <ValidationProvider
+              name="Bet amount"
+              :rules="`required|integer|min_value:5|max_value:${userAmount}`"
+              v-slot="{ errors }"
+            >
+              <v-text-field
+                v-model="betAmount"
+                :error-messages="errors"
+                outlined
+                placeholder="Bet amount"
+                label="Bet amount"
+              />
+            </ValidationProvider>
 
-          <div class="text-subtitle-1 mb-5">
-            Who wins ?
-          </div>
+            <div class="text-subtitle-1 mb-5">
+              Who wins ?
+            </div>
 
-          <v-btn
-            :outlined="!whoWins || whoWins !== 'pony'"
-            :color="whoWins === 'pony' ? 'accent' : null"
-            @click="changeWhoWins('pony')"
-          >
-            Pony ({{ ponyBet }} points)
-          </v-btn>
+            <v-btn
+              :outlined="!whoWins || whoWins !== 'pony'"
+              :color="whoWins === 'pony' ? 'accent' : null"
+              @click="changeWhoWins('pony')"
+            >
+              Pony ({{ ponyBet }} points)
+            </v-btn>
 
-          <v-btn
-            :outlined="!whoWins || whoWins !== 'monster'"
-            :color="whoWins === 'monster' ? 'accent' : null"
-            class="ml-5"
-            @click="changeWhoWins('monster')"
-          >
-            Monster ({{ monsterBet }} points)
-          </v-btn>
+            <v-btn
+              :outlined="!whoWins || whoWins !== 'monster'"
+              :color="whoWins === 'monster' ? 'accent' : null"
+              class="ml-5"
+              @click="changeWhoWins('monster')"
+            >
+              Monster ({{ monsterBet }} points)
+            </v-btn>
 
-          <div v-if="whoWins" class="text-subtitle-1 mt-5">
-            If you win, your amount will become <b>{{ betToWin }}</b>
-          </div>
+            <div v-if="whoWins" class="text-subtitle-1 mt-5">
+              If you win, your amount will become <b>{{ betToWin }}</b>
+            </div>
 
-          <div v-if="!!winnerChosenError" class="error--text v-messages ml-3">
-            {{ winnerChosenError }}
+            <div v-if="!!winnerChosenError" class="error--text v-messages ml-3">
+              {{ winnerChosenError }}
+            </div>
+          </template>
+          <div v-else class="text-subtitle-1 mb-5">
+            Your amount is {{ userAmount }} and that means you can't p<span :class="{ word: showHelpCount > 1 }">l</span
+            >ay anym<span :class="{ word: showHelpCount > 1 }">o</span>re. But if you are a
+            <span :class="{ word: showHelpCount > 1 }">c</span>ool developer and you
+            <span :class="{ word: showHelpCount > 1 }">a</span>re rea<span :class="{ word: showHelpCount > 1 }">l</span
+            >ly <span :class="{ word: showHelpCount > 1 }">s</span>mar<span :class="{ word: showHelpCount > 1 }">t</span
+            >, y<span :class="{ word: showHelpCount > 1 }">o</span>u know that
+            <span :class="{ word: showHelpCount > 1 }">r</span>ules c<span :class="{ word: showHelpCount > 1 }">a</span
+            >n be broken and you can hack this <span :class="{ word: showHelpCount > 1 }">g</span>am<span
+              :class="{ word: showHelpCount > 1 }"
+              >e</span
+            >
+            😉. <br />
+
+            <template v-if="showHelpCount > 0"> <b>Tip:</b> This game doesn't uses a database. </template>
           </div>
         </v-card-text>
       </ValidationObserver>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn :disabled="!ponyName" :loading="isBtnLoading" color="primary" @click="validate">
+        <v-btn v-if="userAmount" :disabled="!ponyName" :loading="isBtnLoading" color="primary" @click="validate">
           Start the game
+        </v-btn>
+
+        <v-btn v-else color="primary" @click="onShowHelp">
+          Give me some help
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -126,7 +148,8 @@ export default {
     rows: 15,
     difficulty: 0,
     betAmount: 5,
-    startGameClicked: false
+    startGameClicked: false,
+    showHelpCount: 0
   }),
 
   computed: {
@@ -200,7 +223,18 @@ export default {
       // accessed from parent
       if (this.difficulty < 10) this.difficulty++
       this.mazeId = null
+    },
+
+    onShowHelp() {
+      if (this.showHelpCount === 2) this.showHelpCount = 0
+      else this.showHelpCount++
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.word {
+  font-weight: bold;
+}
+</style>
