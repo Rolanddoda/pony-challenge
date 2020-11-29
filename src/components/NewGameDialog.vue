@@ -1,5 +1,15 @@
 <template>
   <v-dialog :value="!mazeId" persistent max-width="450">
+    <v-snackbar v-model="snackbar" timeout="-1" multi-line>
+      {{ snackbarMessage }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
+
     <v-card>
       <v-card-title class="headline">
         Pony vs monster game
@@ -37,7 +47,7 @@
             />
           </ValidationProvider>
 
-          <template v-if="userAmount">
+          <template v-if="userAmount && userAmount > 5">
             <div class="text-subtitle-1 mb-5">
               Your amount is <b>{{ userAmount }}</b> points to bet. Place your bet:
             </div>
@@ -106,7 +116,13 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn v-if="userAmount" :disabled="!ponyName" :loading="isBtnLoading" color="primary" @click="validate">
+        <v-btn
+          v-if="userAmount && userAmount > 5"
+          :disabled="!ponyName"
+          :loading="isBtnLoading"
+          color="primary"
+          @click="validate"
+        >
           Start the game
         </v-btn>
 
@@ -120,7 +136,7 @@
 
 <script>
 import '@/utils/validations'
-import { randomInteger } from '@/utils/helpers'
+import { isNumericAndPositive, randomInteger } from '@/utils/helpers'
 import {
   amount as userAmount,
   changeBet,
@@ -129,7 +145,8 @@ import {
   ponyBet,
   changePonyBet,
   monsterBet,
-  changeMonsterBet
+  changeMonsterBet,
+  changeAmount
 } from '@/functionalities/bet/betState'
 // Libraries
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
@@ -149,7 +166,9 @@ export default {
     difficulty: 0,
     betAmount: 5,
     startGameClicked: false,
-    showHelpCount: 0
+    showHelpCount: 0,
+    snackbarMessage: null,
+    snackbar: false
   }),
 
   computed: {
@@ -178,6 +197,30 @@ export default {
         this.changeMonsterBet(randomInteger(5, 8))
       },
       immediate: true
+    }
+  },
+
+  created() {
+    window.onstorage = () => {
+      const amountFromLS = localStorage.getItem('amount')
+
+      if (isNumericAndPositive(amountFromLS) && Number(amountFromLS) < 100 && Number(amountFromLS) >= 5) {
+        this.snackbar = true
+        this.snackbarMessage = 'Wow wow wow. You genius. You did it, you hacked the game. 😉'
+        changeAmount(Number(amountFromLS))
+      } else if (isNumericAndPositive(amountFromLS) && Number(amountFromLS) < 5) {
+        this.snackbar = true
+        this.snackbarMessage = `Not so smart 😎. You can't play with ${amountFromLS} points 🤣`
+        changeAmount(Number(amountFromLS))
+      } else if (isNumericAndPositive(amountFromLS) && Number(amountFromLS) > 100) {
+        this.snackbar = true
+        this.snackbarMessage = `Ha! This game won't allow you to enter an amount greater than 100. Can you do it though ?? 🤨 '`
+        localStorage.setItem('amount', `${this.userAmount}`)
+      } else {
+        this.snackbar = true
+        this.snackbarMessage = `What's up with you ? You can't enter a valid amount ?? pff humans...`
+        localStorage.setItem('amount', `${this.userAmount}`)
+      }
     }
   },
 
