@@ -127,7 +127,7 @@
         </v-btn>
 
         <v-btn v-else color="primary" @click="onShowHelp">
-          Give me some help
+          {{ helpBtnText }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -187,6 +187,12 @@ export default {
       if (!this.whoWins) return
       const property = this.whoWins + 'Bet'
       return this.betAmount * this[property]
+    },
+
+    helpBtnText() {
+      if (!this.showHelpCount) return 'Give me some help'
+      if (this.showHelpCount === 1) return 'I want more help'
+      return 'Hide help'
     }
   },
 
