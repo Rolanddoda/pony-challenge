@@ -88,7 +88,7 @@
             </v-btn>
 
             <div v-if="whoWins" class="text-subtitle-1 mt-5">
-              If you win, your amount will become <b>{{ betToWin }}</b>
+              If you win, your amount will become <b>{{ betToWin + userAmount }}</b>
             </div>
 
             <div v-if="!!winnerChosenError" class="error--text v-messages ml-3">
@@ -220,7 +220,7 @@ export default {
         changeAmount(Number(amountFromLS))
       } else if (isNumericAndPositive(amountFromLS) && Number(amountFromLS) > 100) {
         this.snackbar = true
-        this.snackbarMessage = `Ha! This game won't allow you to enter an amount greater than 100. Can you do it though ?? 🤨 '`
+        this.snackbarMessage = `Ha! This game won't allow an amount greater than 100. Can you do it though ?? 🤨`
         localStorage.setItem('amount', `${this.userAmount}`)
       } else {
         this.snackbar = true

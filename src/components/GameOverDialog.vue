@@ -55,8 +55,8 @@ export default {
 
   watch: {
     dialog() {
-      if (this.ponyWon && this.whoWins === 'pony') this.onNewAmount(this.ponyBet * this.bet)
-      else if (!this.ponyWon && this.whoWins === 'monster') this.onNewAmount(this.monsterBet * this.bet)
+      if (this.ponyWon && this.whoWins === 'pony') this.onNewAmount(this.ponyBet * this.bet + this.amount)
+      else if (!this.ponyWon && this.whoWins === 'monster') this.onNewAmount(this.monsterBet * this.bet + this.amount)
       else this.onNewAmount(this.amount - this.bet)
     }
   },
