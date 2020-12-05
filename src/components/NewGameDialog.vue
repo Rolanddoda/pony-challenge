@@ -183,20 +183,20 @@ export default {
       const amountFromLS = localStorage.getItem('amount')
 
       if (isNumericAndPositive(amountFromLS) && Number(amountFromLS) <= 100 && Number(amountFromLS) >= 5) {
-        this.snackbar = true
         this.snackbarMessage = 'Wow wow wow. You genius. You did it, you hacked the game. 😉'
+        this.snackbar = true
         changeAmount(Number(amountFromLS))
       } else if (isNumericAndPositive(amountFromLS) && Number(amountFromLS) < 5) {
-        this.snackbar = true
         this.snackbarMessage = `Not so smart 😎. You can't play with ${amountFromLS} points 🤣`
+        this.snackbar = true
         changeAmount(Number(amountFromLS))
       } else if (isNumericAndPositive(amountFromLS) && Number(amountFromLS) > 100) {
-        this.snackbar = true
         this.snackbarMessage = `Ha! This game won't allow an amount greater than 100. Can you do it though ?? 🤨`
+        this.snackbar = true
         localStorage.setItem('amount', `${this.userAmount}`)
       } else {
-        this.snackbar = true
         this.snackbarMessage = `What's up with you ? You can't enter a valid amount ?? pff humans...`
+        this.snackbar = true
         localStorage.setItem('amount', `${this.userAmount}`)
       }
     }
@@ -244,6 +244,7 @@ export default {
       // accessed from parent
       this.mazeId = null
       this.changeWhoWins(null)
+      this.snackbar = false
       this.startGameClicked = false
     },
 
