@@ -17,37 +17,7 @@
 
       <ValidationObserver ref="validationObserver">
         <v-card-text>
-          <ValidationProvider name="Columns" rules="required|integer|between:15,25" v-slot="{ errors }">
-            <v-text-field
-              v-model="cols"
-              :error-messages="errors"
-              label="Maze Columns 15-25"
-              placeholder="Columns of the maze"
-              outlined
-            />
-          </ValidationProvider>
-
-          <ValidationProvider name="Rows" rules="required|integer|between:15,25" v-slot="{ errors }">
-            <v-text-field
-              v-model="rows"
-              :error-messages="errors"
-              label="Maze Rows 15-25"
-              placeholder="Rows of the maze"
-              outlined
-            />
-          </ValidationProvider>
-
-          <ValidationProvider name="Rows" rules="required|integer|between:0,10" v-slot="{ errors }">
-            <v-text-field
-              v-model="difficulty"
-              :error-messages="errors"
-              label="Difficulty 0-10"
-              placeholder="Difficulty"
-              outlined
-            />
-          </ValidationProvider>
-
-          <template v-if="userAmount && userAmount > 5">
+          <template v-if="userAmount && userAmount >= 5">
             <div class="text-subtitle-1 mb-5">
               Your amount is <b>{{ userAmount }}</b> points to bet. Place your bet:
             </div>
@@ -117,7 +87,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
-          v-if="userAmount && userAmount > 5"
+          v-if="userAmount && userAmount >= 5"
           :disabled="!ponyName"
           :loading="isBtnLoading"
           color="primary"
@@ -163,7 +133,7 @@ export default {
     mazeId: null,
     cols: 15,
     rows: 15,
-    difficulty: 0,
+    difficulty: 10,
     betAmount: 5,
     startGameClicked: false,
     showHelpCount: 0,
@@ -199,7 +169,9 @@ export default {
   watch: {
     mazeId: {
       handler() {
-        this.changePonyBet(randomInteger(2, 3))
+        const ponyBet = [1.2, 1.3, 1.5, 2]
+
+        this.changePonyBet(ponyBet[randomInteger(0, 3)])
         this.changeMonsterBet(randomInteger(5, 8))
       },
       immediate: true
@@ -210,7 +182,7 @@ export default {
     window.onstorage = () => {
       const amountFromLS = localStorage.getItem('amount')
 
-      if (isNumericAndPositive(amountFromLS) && Number(amountFromLS) < 100 && Number(amountFromLS) >= 5) {
+      if (isNumericAndPositive(amountFromLS) && Number(amountFromLS) <= 100 && Number(amountFromLS) >= 5) {
         this.snackbar = true
         this.snackbarMessage = 'Wow wow wow. You genius. You did it, you hacked the game. 😉'
         changeAmount(Number(amountFromLS))
@@ -258,8 +230,8 @@ export default {
           this.mazeId = data.maze_id
           this.$emit('start-game', {
             mazeId: this.mazeId,
-            cols: this.cols,
-            rows: this.rows
+            cols: Number(this.cols),
+            rows: Number(this.rows)
           })
         })
         .catch(err => {
@@ -270,8 +242,9 @@ export default {
 
     onNewGame() {
       // accessed from parent
-      if (this.difficulty < 10) this.difficulty++
       this.mazeId = null
+      this.changeWhoWins(null)
+      this.startGameClicked = false
     },
 
     onShowHelp() {
