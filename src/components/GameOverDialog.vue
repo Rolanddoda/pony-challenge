@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="290">
+  <v-dialog v-model="dialog" persistent max-width="370">
     <v-card>
       <v-card-title class="headline">
         <h2 v-if="userWon">You won!!!</h2>
@@ -7,6 +7,7 @@
       </v-card-title>
 
       <v-card-text>
+        <h3 v-if="apiBug">It's not your fault. Trustpilot api has a bug.</h3>
         <h3>
           Your new amount is <b>{{ amount }}</b>
         </h3>
@@ -28,7 +29,8 @@ import { amount, bet, changeAmount, whoWins, ponyBet, monsterBet } from '@/funct
 export default {
   props: {
     value: Boolean,
-    ponyWon: Boolean
+    ponyWon: Boolean,
+    apiBug: Boolean
   },
 
   computed: {
@@ -57,7 +59,7 @@ export default {
     dialog() {
       if (this.ponyWon && this.whoWins === 'pony') this.onNewAmount(this.ponyBet * this.bet + this.amount)
       else if (!this.ponyWon && this.whoWins === 'monster') this.onNewAmount(this.monsterBet * this.bet + this.amount)
-      else this.onNewAmount(this.amount - this.bet)
+      else this.onNewAmount(0)
     }
   },
 

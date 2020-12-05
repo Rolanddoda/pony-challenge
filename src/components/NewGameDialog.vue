@@ -12,7 +12,7 @@
 
     <v-card>
       <v-card-title class="headline">
-        Pony vs monster game
+        Pony vs Monster game
       </v-card-title>
 
       <ValidationObserver ref="validationObserver">
@@ -41,24 +41,26 @@
             </div>
 
             <v-btn
-              :outlined="!whoWins || whoWins !== 'pony'"
-              :color="whoWins === 'pony' ? 'accent' : null"
-              @click="changeWhoWins('pony')"
-            >
-              Pony ({{ ponyBet }} points)
-            </v-btn>
-
-            <v-btn
               :outlined="!whoWins || whoWins !== 'monster'"
               :color="whoWins === 'monster' ? 'accent' : null"
-              class="ml-5"
               @click="changeWhoWins('monster')"
             >
               Monster ({{ monsterBet }} points)
             </v-btn>
 
+            <v-btn
+              :outlined="!whoWins || whoWins !== 'pony'"
+              :color="whoWins === 'pony' ? 'accent' : null"
+              class="ml-5"
+              @click="changeWhoWins('pony')"
+            >
+              Pony ({{ ponyBet }} points)
+            </v-btn>
+
             <div v-if="whoWins" class="text-subtitle-1 mt-5">
-              If you win, your amount will become <b>{{ betToWin + userAmount }}</b>
+              If you win, your amount will become <b>{{ betToWin + userAmount }}</b> <br />
+              If you lose, your amount will become <b>0</b>. <br />
+              How many points can you get without losing ?
             </div>
 
             <div v-if="!!winnerChosenError" class="error--text v-messages ml-3">
@@ -169,9 +171,7 @@ export default {
   watch: {
     mazeId: {
       handler() {
-        const ponyBet = [1.2, 1.3, 1.5, 2]
-
-        this.changePonyBet(ponyBet[randomInteger(0, 3)])
+        this.changePonyBet(randomInteger(2, 4))
         this.changeMonsterBet(randomInteger(5, 8))
       },
       immediate: true

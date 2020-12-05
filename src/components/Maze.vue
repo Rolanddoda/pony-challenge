@@ -1,6 +1,6 @@
 <template>
   <div class="game fill-height pa-2">
-    <GameOverDialog :pony-won="won" v-model="dialog" @new-game="$emit('new-game')" />
+    <GameOverDialog :api-bug="apiBug" :pony-won="won" v-model="dialog" @new-game="$emit('new-game')" />
 
     <div class="maze fill-height" :style="{ '--cols': cols, '--rows': rows }" v-if="data">
       <div
@@ -60,7 +60,8 @@ export default {
     pony: null,
     ponyPathPos: 1,
     dialog: false,
-    won: false
+    won: false,
+    apiBug: false
   }),
 
   computed: {
@@ -94,6 +95,7 @@ export default {
       if (pos !== this.data['end-point'][0] && data.state === 'active') {
         setTimeout(() => this.play(), 300)
       } else {
+        if (data.state === 'over' && pos !== this.data['end-point'][0]) this.apiBug = true
         this.dialog = true
       }
     },
